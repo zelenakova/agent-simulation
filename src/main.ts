@@ -85,7 +85,7 @@ agent Beetle:
 ants = create(Ant, 80)
 beetles = create(Beetle, 35)
 
-def update_all():
+def go():
     ask(ants):
         move()
 
