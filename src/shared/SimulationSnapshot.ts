@@ -7,4 +7,5 @@ export type SimulationSnapshot = {
   patchHeight: number;
   patchCellSize: number;
   patchValues: Float32Array<ArrayBufferLike>;
+  patchColors: Uint32Array;
 };

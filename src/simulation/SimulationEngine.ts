@@ -107,7 +107,7 @@ export class SimulationEngine {
     Velocity.x = sharedVelocities.subarray(0, count);
     Velocity.y = sharedVelocities.subarray(count, count * 2);
 
-    const cellSize = 6;
+    const cellSize = 4;
     const patchWidth = Math.floor(width / cellSize);
     const patchHeight = Math.floor(height / cellSize);
 
