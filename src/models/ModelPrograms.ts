@@ -138,11 +138,12 @@ def go():
     ask(ants):
         move()
 
-    diffuse("chemical", 0.2)
+    diffuse("chemical", 0.15)
     evaporate("chemical", 0.02)
 
     ask(Ground):
         recolor()
+
 `,
 
 	fire: `density = 65
