@@ -495,8 +495,12 @@ export class Interpreter {
 	        return this.executeFace(functionCall);
         }
 
+        if (functionCall.name === "count_neighbors4") {
+            return this.executeCountNeighbors4(functionCall);
+        }
+
         if (functionCall.name === "count_neighbors") {
-            return this.executeCountNeighbors(functionCall);
+	        return this.executeCountNeighbors(functionCall);
         }
 
         const currentEntity = this.getCurrentEntity();
@@ -2371,7 +2375,7 @@ export class Interpreter {
         return patchColors;
     }
 
-    private executeCountNeighbors(
+    private executeCountNeighbors4(
         functionCall: FunctionCall
     ): RuntimeValue {
         if (functionCall.arguments.length !== 2) {
@@ -2459,6 +2463,130 @@ export class Interpreter {
                     Math.abs(offsetX) +
                     Math.abs(offsetY) !==
                     1
+                ) {
+                    continue;
+                }
+
+                const neighbourX =
+                    patchX + offsetX;
+
+                const neighbourY =
+                    patchY + offsetY;
+
+                if (
+                    neighbourX < 0 ||
+                    neighbourX >= this.patchWidth ||
+                    neighbourY < 0 ||
+                    neighbourY >= this.patchHeight
+                ) {
+                    continue;
+                }
+
+                const neighbourIndex =
+                    neighbourY *
+                        this.patchWidth +
+                    neighbourX;
+
+                const neighbour =
+                    patches[neighbourIndex];
+
+                const neighbourValue =
+                    neighbour.variables.get(
+                        propertyName
+                    );
+
+                if (
+                    neighbourValue ===
+                    searchedValue
+                ) {
+                    count++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    private executeCountNeighbors(
+        functionCall: FunctionCall
+    ): RuntimeValue {
+        if (functionCall.arguments.length !== 2) {
+            throw new Error(
+                'Funkcia "count_neighbors" očakáva presne 2 argumenty.'
+            );
+        }
+
+        const propertyName =
+            this.evaluateExpression(
+                functionCall.arguments[0]
+            );
+
+        const searchedValue =
+            this.evaluateExpression(
+                functionCall.arguments[1]
+            );
+
+        if (typeof propertyName !== "string") {
+            throw new Error(
+                'Prvý argument funkcie "count_neighbors" musí byť text.'
+            );
+        }
+
+        const currentEntity =
+            this.getCurrentEntity();
+
+        if (currentEntity === null) {
+            throw new Error(
+                'Funkciu "count_neighbors" možno volať iba v kontexte patchu.'
+            );
+        }
+
+        const entityDeclaration =
+            this.getEntityDeclaration(
+                currentEntity.entityName
+            );
+
+        if (entityDeclaration.entityType !== "patch") {
+            throw new Error(
+                'Funkciu "count_neighbors" možno použiť iba pre patch.'
+            );
+        }
+
+        const patchX =
+            currentEntity.variables.get("patchX");
+
+        const patchY =
+            currentEntity.variables.get("patchY");
+
+        if (
+            typeof patchX !== "number" ||
+            typeof patchY !== "number"
+        ) {
+            throw new Error(
+                'Patch musí mať číselné vlastnosti "patchX" a "patchY".'
+            );
+        }
+
+        const patches =
+            this.entityInstances.get(
+                currentEntity.entityName
+            )!;
+
+        let count = 0;
+
+        for (
+            let offsetY = -1;
+            offsetY <= 1;
+            offsetY++
+        ) {
+            for (
+                let offsetX = -1;
+                offsetX <= 1;
+                offsetX++
+            ) {
+                if (
+                    offsetX === 0 &&
+                    offsetY === 0
                 ) {
                     continue;
                 }

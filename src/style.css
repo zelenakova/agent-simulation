@@ -120,3 +120,41 @@ button:hover {
 #codeEditor:focus {
 	border-color: #38bdf8;
 }
+
+.simulation-layout {
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+}
+
+.model-panel {
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 180px;
+	padding: 16px;
+	border: 2px solid #334155;
+	border-radius: 12px;
+	background: #1e293b;
+}
+
+.model-panel h2 {
+	margin: 0 0 6px;
+	font-size: 20px;
+}
+
+.model-button {
+	width: 100%;
+	text-align: left;
+	background: #334155;
+	color: white;
+}
+
+.model-button:hover {
+	background: #475569;
+}
+
+.model-button.active {
+	background: #38bdf8;
+	color: #0f172a;
+}

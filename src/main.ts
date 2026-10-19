@@ -8,6 +8,10 @@ import type {
 import type { SimulationSnapshot } from "./shared/SimulationSnapshot";
 import { Parser } from "./language/Parser.ts";
 import { Interpreter } from "./language/Interpreter.ts";
+import {
+	modelPrograms,
+	type ModelName,
+} from "./models/ModelPrograms.ts";
 
 
 const width = 900;
@@ -56,41 +60,14 @@ const languageMessage =
 		"#languageMessage"
 	)!;
 
+const modelButtons =
+	document.querySelectorAll<HTMLButtonElement>(
+		".model-button"
+	);
+
 const visualizer = new PixiVisualizer();
 await visualizer.initialize(container, width, height);
-const defaultSource = `patch Ground:
-    def setup():
-        value = 0
-
-agent Ant:
-    def setup():
-        x = 50 + random(800)
-        y = 50 + random(500)
-        direction = random(360)
-
-    def move():
-        turn(3)
-        move_forward(1)
-
-agent Beetle:
-    def setup():
-        x = 50 + random(800)
-        y = 50 + random(500)
-        direction = random(360)
-
-    def move():
-        turn(-4)
-        move_forward(1.5)
-
-ants = create(Ant, 80)
-beetles = create(Beetle, 35)
-
-def go():
-    ask(ants):
-        move()
-
-    ask(beetles):
-        move()`;
+const defaultSource = modelPrograms.ants;
 
 codeEditor.value = defaultSource;
 
@@ -196,6 +173,49 @@ function loadProgram(): void {
 
 		languageMessage.className =
 			"message-error";
+	}
+}
+
+function selectModel(
+	modelName: ModelName
+): void {
+	codeEditor.value =
+		modelPrograms[modelName];
+
+	loadProgram();
+
+	for (const button of modelButtons) {
+		const isSelected =
+			button.dataset.model === modelName;
+
+		button.classList.toggle(
+			"active",
+			isSelected
+		);
+	}
+}
+
+for (const button of modelButtons) {
+	button.onclick = () => {
+		const modelName =
+			button.dataset.model;
+
+		if (
+			modelName !== "ants" &&
+			modelName !== "fire" &&
+			modelName !== "slime" &&
+			modelName !== "life"
+		) {
+			return;
+		}
+
+		selectModel(modelName);
+	};
+}
+
+for (const button of modelButtons) {
+	if (button.dataset.model === "ants") {
+		button.classList.add("active");
 	}
 }
 
